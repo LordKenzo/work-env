@@ -4,7 +4,10 @@
   "description": "Creo il progetto con:",
   "main": "index.js",
   "scripts": {
-    "lint": "tsc --noEmit && eslint '*/**/*.{js,ts,tsx}' --quiet --fix"
+    "lint": "tsc --noEmit && eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "start": "tsc && concurrently \"npm run tsc:w\"",
+    "tsc": "tsc",
+    "tsc:w": "tsc -w"
   },
   "keywords": [],
   "author": "",

@@ -93,16 +93,16 @@ Il file di base si chiama `.eslintrc.js` (in questo modo, a differenza di JSON, 
 ```js
 // .eslintrc.js
 module.exports = {
-  parser: "@typescript-eslint/parser",
+  parser: '@typescript-eslint/parser',
   extends: [
-    "plugin:@typescript-eslint/recommended",
+    'plugin:@typescript-eslint/recommended',
     // 'plugin:react/recommended',
-    "prettier/@typescript-eslint",
-    "plugin:prettier/recommended",
+    'prettier/@typescript-eslint',
+    'plugin:prettier/recommended',
   ],
   parserOptions: {
     ecmaVersion: 2018,
-    sourceType: "module",
+    sourceType: 'module',
     ecmaFeatures: {
       jsx: true,
     },
@@ -132,7 +132,7 @@ Per usare Prettier ho bisogno di un suo file di configurazione `.prettierrc.js`:
 ```js
 module.exports = {
   semi: true,
-  trailingComma: "all",
+  trailingComma: 'all',
   bracketSpacing: true,
   singleQuote: true,
   printWidth: 80,
@@ -159,7 +159,20 @@ ora nelle regole inseriamo anche il warning per l'uso di single quote:
 
 A questo punto la string 'Asd' sarà invalida per 'prettier/prettier' che corretta in "Asd" non sarà valida per 'ESLint'.
 
-Ora nel file `setings.json` del progetto (quello creato in .vscode) inserisco:
+Posso avere degli sovrascritture delle regole per determinate cartelle, mi basta inserire nel file `.eslintrc.js`:
+
+```
+overrides: [
+    {
+      files: ['test/*.spec.js', 'dist/**/*'], // Or *.test.js
+      rules: {
+        'no-var': 'off',
+      },
+    },
+  ],
+```
+
+Ora nel file `settings.json` del progetto (quello creato in `.vscode`) inserisco:
 
 ```js
 "editor.codeActionsOnSave": {
@@ -219,6 +232,10 @@ indent_style = space
 trim_trailing_whitespace = true
 ```
 
+## Il file eslitignore
+
+Se ho necessita di specificare delle folder da ignorare creo il file `.eslintignore`.
+
 ## Il file gitignore
 
 C'è poco da dire a che serve, copia e incolla nel file `.gitignore`:
@@ -264,4 +281,12 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+```
+
+## Avviare più comandi da script
+
+Installare il package: `npm i -D concurrently` e avere uno script del tipo:
+
+```json
+"start": "tsc && concurrently \"npm run tsc:w\" \"npm run lite\"",
 ```

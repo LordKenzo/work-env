@@ -1,4 +1,8 @@
 module.exports = {
+  root: true,
+  env: {
+    node: false,
+  },
   parser: '@typescript-eslint/parser',
   extends: [
     'plugin:@typescript-eslint/recommended',
@@ -26,4 +30,12 @@ module.exports = {
       version: "detect"
     }*/
   },
+  overrides: [
+    {
+      files: ['test/*.spec.js', 'dist/**/*'], // Or *.test.js
+      rules: {
+        'no-var': 'off',
+      },
+    },
+  ],
 };

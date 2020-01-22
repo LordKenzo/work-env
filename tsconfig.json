@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
     "sourceMap": true,
     "noImplicitAny": true,
     "module": "commonjs",
@@ -9,6 +8,11 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strict": true,
-    "lib": ["es2018", "dom"]
+    "lib": ["es2018", "dom"],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "rootDir": "src/",
+    "outDir": "dist"
   }
 }
