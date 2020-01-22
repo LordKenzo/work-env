@@ -290,3 +290,121 @@ Installare il package: `npm i -D concurrently` e avere uno script del tipo:
 ```json
 "start": "tsc && concurrently \"npm run tsc:w\" \"npm run lite\"",
 ```
+
+## Aggiungiamo WebPack
+
+Installo:
+
+```
+npm i -D webpack webpack-cli webpack-dev-server
+```
+
+Ricorda che webpack dev server crea sempre una rappresentazione in memoria del sito e non crea file.
+
+Per la gestione di file CSS (e SASS) e copiare il nostro file di base HTML andiamo ad installare:
+
+```
+npm i -D css-loader sass-loader style-loader mini-css-extract-plugin copy-webpack-plugin node-sass extract-text-webpack-plugin
+```
+
+Fai attenzione che `sass-loader` ha bisogno di `node-sass`.
+Il `mini-css-extract-plugin` splitta il file css in più file per permettere async, lazy loading, ecc... dai una [letta](https://blog.jakoblind.no/css-modules-webpack/)
+
+Creo il file di configurazione `webpack.config.js`:
+
+```js
+/* eslint-disable */
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
+const index = 'index';
+
+module.exports = {
+  entry: `./src/${index}.ts`,
+  devtool: 'inline-source-map',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+        ],
+      },
+    ],
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].bundle.css',
+    }),
+    new CopyWebpackPlugin([
+      {
+        from: `./${index}.html`,
+      },
+    ]),
+  ],
+  resolve: {
+    extensions: ['.ts', '.js'],
+  },
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+  performance: {
+    maxEntrypointSize: 640000,
+    maxAssetSize: 640000,
+  },
+  devServer: {
+    contentBase: 'dist',
+    port: 8080,
+    // Send API requests on localhost to API server get around CORS.
+    proxy: {
+      '/api': {
+        target: {
+          host: '0.0.0.0',
+          protocol: 'http:',
+          port: 8081,
+        },
+        pathRewrite: {
+          '^/api': '',
+        },
+      },
+    },
+  },
+};
+```
+
+Adesso creo il file `index.html` nella root.
+Così come ho configurato webpack, il file in memoria (o in dist a seconda se lancio webpack-dev-server o webpack) si chiama `bundle.js`.
+
+Se non voglio inserire lo script a mano nell'HTML del bundle installo:
+
+```
+npm i -D html-webpack-plugin
+```
+
+Quindi aggiungo in configurazione:
+
+```js
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+...
+plugins: [new HtmlWebpackPlugin({
+  template: './public/index.html'
+})]
+```
+
+dove ho spostato il mio `index.html` dalla root a public
